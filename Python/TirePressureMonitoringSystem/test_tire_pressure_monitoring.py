@@ -1,15 +1,9 @@
-import unittest
+from unittest import TestCase
 
-from tire_pressure_monitoring import Alarm
+class TestTirePressureMonitoringService(TestCase):
 
-class AlarmTest(unittest.TestCase):
+    def test_check_and_raise_alarm(self):
+        self.assertTrue(False)
 
-    def test_alarm_is_off_by_default(self):
-        alarm = Alarm()
-        assert not alarm.is_alarm_on
-
-    def test_set_alarm(self):
-        alarm = Alarm()
-        actual = alarm.set()
-
-        self.assertTrue(actual.is_alarm_on)
+    def test_check_and_do_nothing(self):
+        self.assertTrue(False)
