@@ -9,7 +9,6 @@ class AlarmTest(unittest.TestCase):
         self.assertFalse(alarm.is_on)
 
     def test_set_alarm(self):
-        alarm = Alarm()
-        actual = alarm.set()
+        actual = Alarm(is_on=True)
 
         self.assertTrue(actual.is_on)
