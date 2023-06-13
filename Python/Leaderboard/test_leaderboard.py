@@ -1,4 +1,7 @@
 import unittest
+from unittest import TestCase
+
+from parameterized import parameterized
 
 from leaderboard import *
 
@@ -16,23 +19,26 @@ race5 = Race("Fictional Grand Prix", [driver4, driver2, driver1])
 driver4.algorithm_version = "1.3"
 race6 = Race("Fictional Grand Prix", [driver2, driver1, driver4])
 
-sample_leaderboard1 = Leaderboard(races=[race1, race2, race3])
-sample_leaderboard2 = Leaderboard(races=[race4, race5, race6])
 
-class LeaderboardTest(unittest.TestCase):
+class TestLeaderboard(TestCase):
 
     def test_winner(self):
-        self.assertEquals("Lewis Hamilton", sample_leaderboard1.driver_rankings()[0])
+        leaderboard = Leaderboard(races=[race1, race2, race3])
+        actual = leaderboard.driver_rankings()[0]
+        self.assertEquals("Lewis Hamilton", actual)
 
     def test_driver_points(self):
-    	self.assertEquals(18+18+25, sample_leaderboard1.driver_points()["Lewis Hamilton"])
+        leaderboard = Leaderboard(races=[race4, race5, race6])
+        actual = leaderboard.driver_points()["Lewis Hamilton"]
+        self.assertEquals(18+18+25, actual)
 
-class RaceTest(unittest.TestCase):
 
-    def test_driver_points(self):
-        self.assertEquals(25, race1.points(driver1))
-        self.assertEquals(18, race1.points(driver2))
-        self.assertEquals(15, race1.points(driver3))
+class TestRace(TestCase):
 
-if __name__ == "__main__":
-    unittest.main()
+    @parameterized.expand([
+        (race1.points(driver1), 25),
+        (race1.points(driver2), 18),
+        (race1.points(driver3), 15)
+    ])
+    def test_driver_points(self, actual, expected):
+        self.assertEquals(expected, actual)
