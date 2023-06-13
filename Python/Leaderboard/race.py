@@ -1,13 +1,23 @@
-class Race(object):
+from dataclasses import dataclass
+from enum import Enum
 
-    _points = [25, 18, 15]
+from driver import Driver
 
-    def __init__(self, name, results):
+
+class Points(Enum):
+    First = 25
+    Second = 18
+    Third = 15
+
+
+@dataclass(frozen=True)
+class Results:
+    first: Driver
+    second: Driver
+    third: Driver
+
+class Race:
+
+    def __init__(self, name, results: Results):
         self.name = name
         self.results = results
-        self.driver_names = {}
-        for driver in results:
-            name = driver.name
-            if isinstance(driver, SelfDrivingCar):
-                name = "Self Driving Car - {} ({})".format(driver.country, driver.algorithm_version)
-            self.driver_names[driver] = name

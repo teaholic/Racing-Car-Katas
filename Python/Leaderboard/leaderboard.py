@@ -4,16 +4,15 @@ from dataclasses import dataclass
 
 class Leaderboard(object):
     
-    def __init__(self, races):
+    def __init__(self, races, drivers):
         self.races = races
+        self.drivers = drivers
 
-    def driver_points(self):
-        driver_points = defaultdict(int)
+    def score_driver_points(self):
         for race in self.races:
             for driver in race.results:
                 name = race.driver_name(driver)
                 driver_points[name] += race.points(driver)
-        return driver_points
 
     def driver_rankings(self):
         rankings = sorted(self.driver_points().items(), key=lambda x: x[1], reverse=True)
