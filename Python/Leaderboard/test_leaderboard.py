@@ -70,14 +70,14 @@ class TestScoringService(TestCase):
         (race5, expected1, expected2),
         (race6, expected2, expected3),
     ])
-    def test_after_race(self, race, drivers, expected):
-        actual = ScoringService()._after_race(race=race, drivers=drivers)
+    def test_score_single_race(self, race, drivers, expected):
+        actual = ScoringService()._score_single_race(race=race, drivers=drivers)
         self.assertEqual(actual[0], expected[0])
         self.assertEqual(actual[1], expected[1])
         self.assertEqual(actual[2], expected[2])
         self.assertEqual(actual[3], expected[3])
 
-    def test_after_races(self):
+    def test_run(self):
         races = [race4, race5, race6]
         drivers = [driver1, driver2, driver3, driver4]
         expected = [
@@ -86,7 +86,7 @@ class TestScoringService(TestCase):
             Driver(id=3, name='Sebastian Vettel', country='DE', points=0),
             Driver(id=4, name='Self Driving Car - Acme (1.2)', country='Acme', points=25+15+15)
         ]
-        actual = ScoringService().after_races(races=races, drivers=drivers)
+        actual = ScoringService().run(races=races, drivers=drivers)
         self.assertEqual(actual[0], expected[0])
         self.assertEqual(actual[1], expected[1])
         self.assertEqual(actual[2], expected[2])
