@@ -14,4 +14,7 @@ class UnicodeFileToHtmlTextConverterTest(unittest.TestCase):
 
         expected = "Hello world<br /><br />"
         actual = converter.convert_to_html(full_filename_with_path="full_filename_with_path")
+
+        assert repository.open.called_once()
+        assert html_converter.escape.called_once()
         self.assertEqual(actual, expected)
