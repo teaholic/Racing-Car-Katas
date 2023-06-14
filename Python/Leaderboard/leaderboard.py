@@ -1,50 +1,35 @@
-from collections import defaultdict
+import operator
+from typing import List
+
+from driver import Driver
+from race import Race
+
+
+class ScoringService:
+
+    def run(self, races: List[Race], drivers: List[Driver]) -> List[Driver]:
+        updated_drivers = drivers
+        for race in races:
+            results = self._score_single_race(race, updated_drivers)
+            updated_drivers = results
+        return updated_drivers
+
+    def _score_single_race(self, race: Race, drivers: List[Driver]) -> List[Driver]:
+        updated_drivers = []
+        for driver in drivers:
+            result = race.assign_point(driver=driver)
+            updated_drivers.append(result)
+        return updated_drivers
 
 
 class Leaderboard(object):
     
-    def __init__(self, races):
-        self.races = races
+    def __init__(self, scoring_service: ScoringService):
+        self.scoring_service = scoring_service
 
-    def driver_points(self):
-        driver_points = defaultdict(int)
-        for race in self.races:
-            for driver in race.results:
-                name = race.driver_name(driver)
-                driver_points[name] += race.points(driver)
-        return driver_points
+    def score_drivers(self, races: List[Race], drivers: List[Driver]):
+        return self.scoring_service.run(races=races, drivers=drivers)
 
-    def driver_rankings(self):
-        rankings = sorted(self.driver_points().items(), key=lambda x: x[1], reverse=True)
-        return [name for (name, points) in rankings]
-
-
-class Driver(object):
-    def __init__(self, name, country):
-        self.name = name
-        self.country = country
-
-class SelfDrivingCar(Driver):
-    def __init__(self, algorithm_version, company):
-        Driver.__init__(self, None, company)
-        self.algorithm_version = algorithm_version
-        
-class Race(object):
-
-    _points = [25, 18, 15]
-
-    def __init__(self, name, results):
-        self.name = name
-        self.results = results
-        self.driver_names = {}
-        for driver in results:
-            name = driver.name
-            if isinstance(driver, SelfDrivingCar):
-                name = "Self Driving Car - {} ({})".format(driver.country, driver.algorithm_version)
-            self.driver_names[driver] = name
-
-    def points(self, driver):
-        return Race._points[self.results.index(driver)]
-
-    def driver_name(self, driver):
-        return self.driver_names[driver]
+    def compute_rankings(self, scores: List[Driver]):
+        rankings = sorted(scores, key=operator.attrgetter('points'), reverse=True)
+        return [driver.name for driver in rankings]
