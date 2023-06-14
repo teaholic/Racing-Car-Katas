@@ -29,5 +29,7 @@ class Race:
             return self.driver_service.score(driver=driver, new_points=Points.First.value)
         if driver.id == self.results.second.id:
             return self.driver_service.score(driver=driver, new_points=Points.Second.value)
-        else:
+        if driver.id == self.results.third.id:
             return self.driver_service.score(driver=driver, new_points=Points.Third.value)
+        else:
+            return driver
