@@ -10,8 +10,8 @@ class UnicodeFileToHtmlTextConverterTest(unittest.TestCase):
         repository.open.return_value = ["Hello world"]
         html_converter = MagicMock()
         html_converter.escape.return_value = "Hello world<br />"
+        converter = UnicodeFileToHtmlTextConverter(repository=repository, html_converter_client=html_converter)
 
         expected = "Hello world<br /><br />"
-        converter = UnicodeFileToHtmlTextConverter(repository=repository, html_converter_client=html_converter)
         actual = converter.convert_to_html(full_filename_with_path="full_filename_with_path")
         self.assertEqual(actual, expected)
