@@ -4,18 +4,21 @@ import html as html_converter
 
 # for Python 2 uncomment this line
 #import cgi as html_converter
+from Python.TextConverter.repository import FileRepository
 
-class UnicodeFileToHtmlTextConverter(object):
 
-    def __init__(self, full_filename_with_path):
-        self.full_filename_with_path = full_filename_with_path
+class UnicodeFileToHtmlTextConverter:
 
-    def convert_to_html(self):
-        f = open(self.full_filename_with_path, "r")
+    def __init__(self, repository: FileRepository, html_converter_client):
+        self.repository = repository
+        self.html_converter_client = html_converter_client
+
+    def convert_to_html(self, full_filename_with_path):
+        f = self.repository.open(full_filename_with_path)
         html = ""
         for line in f:
             line = line.rstrip()
-            html += html_converter.escape(line, quote=True)
+            html += self.html_converter_client.escape(line, quote=True)
             html += "<br />"
-
+        print(html)
         return html
