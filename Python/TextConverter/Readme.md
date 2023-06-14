@@ -1,0 +1,32 @@
+# Leaderboard
+
+SOLID principles practiced:
+* Single responsibility
+* Interface Segregation
+
+## My Approach
+
+### Understanding the problem
+* I read the html_pages description:
+ >  It not only converts text in a file to html, it also supports pagination
+ 
+* From the description, I found two scopes of needed behavior:
+  1. converts text in a file to html
+  2. supports pagination
+ 
+### Iteration #1
+* These two scopes need to be tested. I started adding (failing) tests for these scopes.
+
+### Iteration #2
+> I'm thinking:
+> 
+> `HtmlPagesConverter` is dependent from an external systems (filesystem to read files). I need to extract this responsibility to separate the pagination and text conversion responsibilities.
+
+* I created a `FileRepository` class and I moved there the responsibility of reading files from filesystem and getting page breaks.
+* I injected `FileRepository` as a dependency of `HtmlPagesConverter`.
+
+> I'm thinking:
+> 
+>The only responsibility left in `HtmlPagesConverter` is to return an html page and to delegate to `FileRepository` to retrieve the lines given a filename and a page number. 
+* 
+* I iterated on the test of `HtmlPagesConverter` using a stubbed `FileRepository` to return a list of lines.
