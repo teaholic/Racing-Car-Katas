@@ -6,6 +6,11 @@ SOLID principles practiced:
 
 ## My Approach
 
+This approach is reflected in the commit history.
+
+Task description:
+> Write the unit tests for the Alarm class. The Alarm class is designed to monitor tire pressure and set an alarm if the pressure falls outside of the expected range. The Sensor class provided for the exercise fakes the behaviour of a real tire sensor, providing random but realistic values.
+
 ### Understanding the problem
 * I read the application description:
  > set an alarm if the pressure falls outside of the expected range
