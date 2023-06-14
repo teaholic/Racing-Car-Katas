@@ -1,11 +1,10 @@
-import unittest
 from unittest import TestCase
 
 from parameterized import parameterized
 
 from race import Race, Podium
 from driver import Driver, SelfDrivingCar, DriverService
-from leaderboard import Leaderboard, ParticipantsService
+from leaderboard import Leaderboard, ScoringService
 
 # Test Data found via http://en.wikipedia.org/wiki/2015_Formula_One_season
 driver1 = Driver(id=1, name="Nico Rosberg", country="DE")
@@ -25,31 +24,27 @@ race6 = Race("Fictional Grand Prix", Podium(first=driver2, second=driver1, third
 
 class TestLeaderboard(TestCase):
 
-    def test_winner(self):
-        leaderboard = Leaderboard(
-            races=[race1, race2, race3],
-            drivers=[driver1, driver2, driver3, driver4],
-            driver_service=DriverService(),
-            participants_service=ParticipantsService()
-        )
-        actual = leaderboard.driver_rankings(0)
-        self.assertEquals("Lewis Hamilton", actual)
+    def test_compute_rankings(self):
+        scores = [
+            Driver(id=1, name='Nico Rosberg', country='DE', points=58),
+            Driver(id=2, name='Lewis Hamilton', country='UK', points=61),
+            Driver(id=3, name='Sebastian Vettel', country='DE', points=0),
+            Driver(id=4, name='Self Driving Car - Acme (1.2)', country='Acme', points=55)
+        ]
+        leaderboard = Leaderboard(scoring_service=ScoringService())
+        actual = leaderboard.compute_rankings(scores)
+        self.assertEquals("Lewis Hamilton", actual[0])
 
-    def test_drivers(self):
-        leaderboard = Leaderboard(
+    def test_score_drivers(self):
+        leaderboard = Leaderboard(scoring_service=ScoringService())
+        updated_drivers = leaderboard.score_drivers(
             races=[race4, race5, race6],
-            drivers=[driver1, driver2, driver3, driver4],
-            driver_service=DriverService(),
-            participants_service=ParticipantsService()
-        )
-        updated_drivers = leaderboard.score_drivers()
-        for driver in updated_drivers:
-            print(driver)
+            drivers=[driver1, driver2, driver3, driver4])
         hamilton = [driver for driver in updated_drivers if driver.name == "Lewis Hamilton"][0]
         self.assertEquals(18+18+25, hamilton.points)
 
 
-class TestParticipantsService(TestCase):
+class TestScoringService(TestCase):
 
     expected1 = [
         Driver(id=1, name='Nico Rosberg', country='DE', points=25),
@@ -75,8 +70,23 @@ class TestParticipantsService(TestCase):
         (race5, expected1, expected2),
         (race6, expected2, expected3),
     ])
-    def test_after(self, race, drivers, expected):
-        actual = ParticipantsService().after(race=race, drivers=drivers)
+    def test_after_race(self, race, drivers, expected):
+        actual = ScoringService()._after_race(race=race, drivers=drivers)
+        self.assertEqual(actual[0], expected[0])
+        self.assertEqual(actual[1], expected[1])
+        self.assertEqual(actual[2], expected[2])
+        self.assertEqual(actual[3], expected[3])
+
+    def test_after_races(self):
+        races = [race4, race5, race6]
+        drivers = [driver1, driver2, driver3, driver4]
+        expected = [
+            Driver(id=1, name='Nico Rosberg', country='DE', points=15+25+18),
+            Driver(id=2, name='Lewis Hamilton', country='UK', points=18+18+25),
+            Driver(id=3, name='Sebastian Vettel', country='DE', points=0),
+            Driver(id=4, name='Self Driving Car - Acme (1.2)', country='Acme', points=25+15+15)
+        ]
+        actual = ScoringService().after_races(races=races, drivers=drivers)
         self.assertEqual(actual[0], expected[0])
         self.assertEqual(actual[1], expected[1])
         self.assertEqual(actual[2], expected[2])

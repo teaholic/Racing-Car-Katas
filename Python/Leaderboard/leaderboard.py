@@ -1,14 +1,20 @@
 import operator
-from dataclasses import dataclass
 from typing import List
 
-from driver import DriverService, Driver
+from driver import Driver
 from race import Race
 
 
-class ParticipantsService:
+class ScoringService:
 
-    def after(self, race: Race, drivers: List[Driver]):
+    def after_races(self, races: List[Race], drivers: List[Driver]) -> List[Driver]:
+        updated_drivers = drivers
+        for race in races:
+            results = self._after_race(race, updated_drivers)
+            updated_drivers = results
+        return updated_drivers
+
+    def _after_race(self, race: Race, drivers: List[Driver]) -> List[Driver]:
         updated_drivers = []
         for driver in drivers:
             result = race.assign_point(driver=driver)
@@ -18,21 +24,12 @@ class ParticipantsService:
 
 class Leaderboard(object):
     
-    def __init__(self, races: List[Race], drivers: List[Driver], driver_service: DriverService, participants_service: ParticipantsService):
-        self.races = races
-        self.drivers = drivers
-        self.driver_service = driver_service
-        self.participants_service = participants_service
+    def __init__(self, scoring_service: ScoringService):
+        self.scoring_service = scoring_service
 
-    def score_drivers(self):
-        updated_drivers = []
-        for race in self.races:
-            results = self.participants_service.after(race, self.drivers)
-            for result in results:
-                updated_drivers.append(result)
-        self.drivers = updated_drivers
+    def score_drivers(self, races: List[Race], drivers: List[Driver]):
+        return self.scoring_service.after_races(races=races, drivers=drivers)
 
-    def driver_rankings(self):
-        rankings = sorted(self.drivers, key=operator.attrgetter('points'), reverse=True)
-        return [name for (name, points) in rankings]
-
+    def compute_rankings(self, scores: List[Driver]):
+        rankings = sorted(scores, key=operator.attrgetter('points'), reverse=True)
+        return [driver.name for driver in rankings]
