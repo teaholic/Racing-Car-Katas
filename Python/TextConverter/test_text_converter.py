@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from text_converter import UnicodeFileToHtmlTextConverter
 
-class UnicodeFileToHtmlTextConverterTest(unittest.TestCase):
+class TestUnicodeFileToHtmlTextConverter(unittest.TestCase):
     
     def test_convert_to_html(self):
         repository = MagicMock()
