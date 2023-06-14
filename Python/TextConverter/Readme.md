@@ -35,3 +35,9 @@ Task description:
 >The only responsibility left in `HtmlPagesConverter` is to return an html page and to delegate to `FileRepository` to retrieve the lines given a filename and a page number. 
 * 
 * I iterated on the test of `HtmlPagesConverter` using a stubbed `FileRepository` to return a list of lines.
+
+### Iteration #3
+* I iterated on testing `UnicodeFileToHtmlTextConverter`. 
+* Also here I had to externalize the behavior of opening the file and inject the client that escapes lines.
+* `UnicodeFileToHtmlTextConverter` is left with the only responsibility of orchestrating these two services interfacing with external systems.
+* As a possible improvement, a facade layer could be added to initialize and inject to `UnicodeFileToHtmlTextConverter` the needed html_converter_client at runtime.
