@@ -3,23 +3,24 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from race import Race, Results
+from race import Race, Podium
 from driver import Driver, SelfDrivingCar, DriverService
 from leaderboard import Leaderboard
 
 # Test Data found via http://en.wikipedia.org/wiki/2015_Formula_One_season
-driver1 = Driver(name="Nico Rosberg", country="DE")
-driver2 = Driver(name="Lewis Hamilton", country="UK")
-driver3 = Driver(name="Sebastian Vettel", country="DE")
-driver4 = DriverService.create(SelfDrivingCar(algorithm_version = "1.2", company="Acme"))
+driver1 = Driver(id=1, name="Nico Rosberg", country="DE")
+driver2 = Driver(id=2, name="Lewis Hamilton", country="UK")
+driver3 = Driver(id=3, name="Sebastian Vettel", country="DE")
+driver4 = DriverService.create(SelfDrivingCar(id=4, algorithm_version = "1.2", company="Acme"))
 
-race1 = Race("Australian Grand Prix", Results(first=driver1, second=driver2, third=driver3))
-race2 = Race("Malaysian Grand Prix", Results(first=driver3, second=driver2, third=driver1))
-race3 = Race("Chinese Grand Prix", Results(first=driver2, second=driver1, third=driver3))
-race4 = Race("Fictional Grand Prix", Results(first=driver1, second=driver2, third=driver4))
-race5 = Race("Fictional Grand Prix", Results(first=driver4, second=driver2, third=driver1))
+driver_service = DriverService()
+race1 = Race("Australian Grand Prix", Podium(first=driver1, second=driver2, third=driver3), driver_service)
+race2 = Race("Malaysian Grand Prix", Podium(first=driver3, second=driver2, third=driver1), driver_service)
+race3 = Race("Chinese Grand Prix", Podium(first=driver2, second=driver1, third=driver3), driver_service)
+race4 = Race("Fictional Grand Prix", Podium(first=driver1, second=driver2, third=driver4), driver_service)
+race5 = Race("Fictional Grand Prix", Podium(first=driver4, second=driver2, third=driver1), driver_service)
 #driver4.algorithm_version = "1.3"
-race6 = Race("Fictional Grand Prix", Results(first=driver2, second=driver1, third=driver4))
+race6 = Race("Fictional Grand Prix", Podium(first=driver2, second=driver1, third=driver4), driver_service)
 
 
 class TestLeaderboard(TestCase):
